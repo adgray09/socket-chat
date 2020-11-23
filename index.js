@@ -10,21 +10,15 @@ app.get('/', (req, res) => {
 io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on('login', function(data){
-        console.log('a user ' + data.userId + ' connected');
-
-        users[socket.id] = data.userId;
-    });
-    socket.on('disconnect', function() {
-        console.log('user ' + users[socket.id] + ' disconnected');
-
-        delete users[socket.id];
-    })
+    io.emit('chat message', 'a user connected');
+      socket.on('disconnect', () => {
+        io.emit('chat message', 'user disconnected')
+      })
+    
     socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
+      io.emit('chat message', msg);
+      console.log("message: " + msg)
     });
-
 });
 
 http.listen(3000, () => {
